@@ -4,7 +4,7 @@
 
     <!-- Botón solo para admin -->
     <div v-if="isAdmin">
-      <button @click="showModal = true">Nuevo Producto</button>
+      <button @click="showCreateForm = true">Nuevo Producto</button>
     </div>
 
     <table>
@@ -20,22 +20,34 @@
           <td>{{ product.name }}</td>
           <td>{{ product.price }}</td>
           <td v-if="isAdmin">
-            <button @click="editProduct(product)">Editar</button>
+            <button @click="openEditForm(product)">Editar</button>
             <button @click="deleteProduct(product.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- Modal de creación de producto -->
-    <div v-if="showModal">
+    <!-- Formulario para crear producto -->
+    <div v-if="showCreateForm">
       <form @submit.prevent="createProduct">
         <label>Nombre:</label>
         <input v-model="newProduct.name" required />
         <label>Precio:</label>
         <input v-model.number="newProduct.price" required />
         <button type="submit">Crear Producto</button>
-        <button type="button" @click="showModal = false">Cancelar</button>
+        <button type="button" @click="showCreateForm = false">Cancelar</button>
+      </form>
+    </div>
+
+    <!-- Formulario para editar producto -->
+    <div v-if="showEditForm">
+      <form @submit.prevent="updateProduct">
+        <label>Nombre:</label>
+        <input v-model="currentProduct.name" required />
+        <label>Precio:</label>
+        <input v-model.number="currentProduct.price" required />
+        <button type="submit">Guardar Cambios</button>
+        <button type="button" @click="closeEditForm">Cancelar</button>
       </form>
     </div>
   </div>
@@ -53,7 +65,13 @@ export default {
         name: '',
         price: ''
       },
-      showModal: false,
+      currentProduct: {
+        id: null,
+        name: '',
+        price: ''
+      },
+      showCreateForm: false,
+      showEditForm: false,
       isAdmin: false,
     };
   },
@@ -96,24 +114,39 @@ export default {
         const res = await axios.post('/api/products', this.newProduct);
         this.products.push(res.data);
         this.newProduct = { name: '', price: '' };
-        this.showModal = false;
+        this.showCreateForm = false;
       } catch (error) {
         console.error('Error al crear producto:', error);
       }
     },
-    editProduct(product) {
-      // Lógica de edición si deseas expandir esto
-      alert(`Editar producto ID: ${product.id}`);
+    openEditForm(product) {
+      this.currentProduct = { ...product };
+      this.showEditForm = true;
+    },
+    closeEditForm() {
+      this.showEditForm = false;
+      this.currentProduct = { id: null, name: '', price: '' };
+    },
+    async updateProduct() {
+      try {
+        const res = await axios.put(`/api/products/${this.currentProduct.id}`, this.currentProduct);
+        const index = this.products.findIndex(p => p.id === this.currentProduct.id);
+        if (index !== -1) {
+          this.products.splice(index, 1, res.data);
+        }
+        this.closeEditForm();
+      } catch (error) {
+        console.error('Error al actualizar producto:', error);
+      }
     },
     async deleteProduct(id) {
       try {
-        const response = await axios.delete(`/api/products/${id}`);
+        await axios.delete(`/api/products/${id}`);
         this.products = this.products.filter(p => p.id !== id);
       } catch (error) {
-        console.error("Error al eliminar producto:", error.response || error.message);
+        console.error('Error al eliminar producto:', error);
       }
     }
-
   }
 };
 </script>

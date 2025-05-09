@@ -1,0 +1,155 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Productes",
+        "description": "Documentació de l'API REST per a la gestió de productes",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/products": {
+            "get": {
+                "summary": "Llista tots els productes",
+                "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
+                "responses": {
+                    "200": {
+                        "description": "Llista de productes"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Crea un nou producte",
+                "operationId": "e8185e307706e2cd84bbcf5171e2f09d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producte 1"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 100.5
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripció del producte"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producte creat correctament"
+                    },
+                    "403": {
+                        "description": "No tens permisos per crear un producte"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "summary": "Mostra un producte específic",
+                "operationId": "7ab21ddb713501f3d4c2914892c02a21",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalls del producte"
+                    },
+                    "404": {
+                        "description": "Producte no trobat"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Actualitza un producte existent",
+                "operationId": "6a7e11900844cd85cff66e662b82bd4c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producte actualitzat"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "example": 150.75
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripció actualitzada"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Producte actualitzat correctament"
+                    },
+                    "404": {
+                        "description": "Producte no trobat"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Elimina un producte",
+                "operationId": "e80a6ca46716acee6b47ea1ac91663c0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producte",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Producte eliminat correctament"
+                    },
+                    "404": {
+                        "description": "Producte no trobat"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,9 +10,15 @@ use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
-    
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/products",
+     *     summary="Llista tots els productes",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Llista de productes"
+     *     )
+     * )
      */
     public function index()
     {
@@ -21,7 +27,26 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/products",
+     *     summary="Crea un nou producte",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Producte 1"),
+     *             @OA\Property(property="price", type="number", example=100.50),
+     *             @OA\Property(property="description", type="string", example="Descripció del producte")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Producte creat correctament"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No tens permisos per crear un producte"
+     *     )
+     * )
      */
     public function store(StoreProductRequest $request)
     {
@@ -41,10 +66,26 @@ class ProductController extends Controller
         ], 201);
     }
 
-
-
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/products/{id}",
+     *     summary="Mostra un producte específic",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del producte",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalls del producte"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Producte no trobat"
+     *     )
+     * )
      */
     public function show(Product $product)
     {
@@ -53,7 +94,33 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/products/{id}",
+     *     summary="Actualitza un producte existent",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del producte",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Producte actualitzat"),
+     *             @OA\Property(property="price", type="number", example=150.75),
+     *             @OA\Property(property="description", type="string", example="Descripció actualitzada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Producte actualitzat correctament"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Producte no trobat"
+     *     )
+     * )
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
@@ -65,7 +132,25 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/products/{id}",
+     *     summary="Elimina un producte",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del producte",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Producte eliminat correctament"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Producte no trobat"
+     *     )
+     * )
      */
     public function destroy(Product $product)
     {
@@ -76,4 +161,3 @@ class ProductController extends Controller
         return response()->json(['message' => 'Producto eliminado'], 200);
     }
 }
-

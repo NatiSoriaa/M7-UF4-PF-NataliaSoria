@@ -4,6 +4,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\AdminMiddleware;
 
 // Rutas para registro y login
 Route::post('/register', [AuthController::class, 'register']);
@@ -15,7 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user(); // Usado por Vue para verificar si es admin
     });
 
-    Route::middleware('adminMiddleware')->group(function () {
+    Route::middleware(AdminMiddleware::class)->group(function () {
         Route::post('/products', [ProductController::class, 'store']);
         Route::put('/products/{product}', [ProductController::class, 'update']);
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
@@ -23,6 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+
 
 

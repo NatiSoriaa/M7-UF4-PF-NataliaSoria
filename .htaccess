@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Asegúrate de que los archivos estáticos se sirvan correctamente
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L]
+
+    # Permitir acceso a los assets de Swagger UI
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2|ttf|svg|eot)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>

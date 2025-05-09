@@ -20,7 +20,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',  // Asegúrate de que este campo esté presente en tu tabla 'users'
     ];
 
     /**
@@ -43,9 +42,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
+
+    // public function isAdmin()
+    // {
+    //     return $this->$role === 'admin';
+    // }
 
 }
