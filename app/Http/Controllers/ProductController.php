@@ -8,43 +8,53 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
+/**
+ * @OA\Tag(
+ *     name="Products",
+ *     description="API Endpoints for Product Management"
+ * )
+ */
 class ProductController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/api/products",
-     *     summary="Llista tots els productes",
+     *     tags={"Products"},
+     *     summary="List all products",
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Llista de productes"
+     *         description="List of products",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Product")
+     *         )
      *     )
      * )
      */
     public function index()
     {
-        // Devuelve todos los productos
-        return response()->json(Product::all());
+        return response()->json(Product::all(), 200);
     }
 
     /**
      * @OA\Post(
      *     path="/api/products",
-     *     summary="Crea un nou producte",
+     *     tags={"Products"},
+     *     summary="Create a new product",
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="Producte 1"),
-     *             @OA\Property(property="price", type="number", example=100.50),
-     *             @OA\Property(property="description", type="string", example="Descripció del producte")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Producte creat correctament"
+     *         description="Product created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response=403,
-     *         description="No tens permisos per crear un producte"
+     *         description="Unauthorized"
      *     )
      * )
      */
@@ -57,7 +67,6 @@ class ProductController extends Controller
         }
 
         $validated = $request->validated();
-
         $product = Product::create($validated);
 
         return response()->json([
@@ -69,95 +78,104 @@ class ProductController extends Controller
     /**
      * @OA\Get(
      *     path="/api/products/{id}",
-     *     summary="Mostra un producte específic",
+     *     tags={"Products"},
+     *     summary="Get a specific product",
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID del producte",
+     *         description="ID of the product",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Detalls del producte"
+     *         description="Product details",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Producte no trobat"
+     *         description="Product not found"
      *     )
      * )
      */
     public function show(Product $product)
     {
-        // Devuelve un producto específico
-        return response()->json($product);
+        return response()->json($product, 200);
     }
 
     /**
      * @OA\Put(
      *     path="/api/products/{id}",
-     *     summary="Actualitza un producte existent",
+     *     tags={"Products"},
+     *     summary="Update an existing product",
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID del producte",
+     *         description="ID of the product",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="Producte actualitzat"),
-     *             @OA\Property(property="price", type="number", example=150.75),
-     *             @OA\Property(property="description", type="string", example="Descripció actualitzada")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Producte actualitzat correctament"
+     *         description="Product updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Producte no trobat"
+     *         description="Product not found"
      *     )
      * )
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        // Actualiza el producto con los datos validados
-        $product->update($request->validated());
+        $user = $request->user();
+        // Verificar si el usuario tiene el rol de 'admin'
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'No tienes permisos para actualizar un producto.'], 403);
+        }
 
-        // Devuelve la respuesta con el producto actualizado
-        return response()->json($product);
+        $product->update($request->validated());
+        return response()->json($product, 200);
     }
 
     /**
      * @OA\Delete(
      *     path="/api/products/{id}",
-     *     summary="Elimina un producte",
+     *     tags={"Products"},
+     *     summary="Delete a product",
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID del producte",
+     *         description="ID of the product",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Producte eliminat correctament"
+     *         response=204,
+     *         description="Product deleted successfully"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Producte no trobat"
+     *         description="Product not found"
      *     )
      * )
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request, Product $product)
     {
-        // Elimina el producto
-        $product->delete();
+        $user = $request->user();
+        // Verificar si el usuario tiene el rol de 'admin'
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'No tienes permisos para eliminar un producto.'], 403);
+        }
 
-        // Devuelve una respuesta de éxito
-        return response()->json(['message' => 'Producto eliminado'], 200);
+        $product->delete();
+        return response()->json(null, 204);
     }
 }

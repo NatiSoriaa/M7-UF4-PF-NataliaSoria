@@ -15,6 +15,11 @@ return [
                 'api' => 'api/documentation',
             ],
             'paths' => [
+
+                'docs' => storage_path('api-docs'), // Ruta donde se generará el archivo JSON
+                'annotations' => base_path('app/Http/Controllers'), // Ruta donde están las anotaciones
+                'swagger_ui_assets_path' => 'vendor/swagger-api/swagger-ui/dist/', // Ruta de los assets de Swagger UI
+
                 /*
                  * Edit to include full URL in ui for assets
                  */
@@ -23,10 +28,10 @@ return [
                 /*
                 * Edit to set path where swagger ui assets should be stored
                 */
-                'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
+                
 
                 /*
-                 * File name of the generated json documentation file
+                 * File name of the generated json documentation file 
                  */
                 'docs_json' => 'api-docs.json',
 
@@ -46,7 +51,6 @@ return [
                 'annotations' => [
                     base_path('app'),
                 ],
-                'docs_url' => env('SWAGGER_DOCS_URL', 'api/documentation'),
             ],
         ],
     ],
@@ -100,6 +104,12 @@ return [
              * `scanOptions.exclude` overwrites this
              */
             'excludes' => [],
+
+            'docs' => storage_path('api-docs'), // Ruta donde se genera el archivo swagger.json
+           
+            'annotations' => base_path('app/Http/Controllers'), // Ruta donde están las anotaciones
+            
+            'swagger_ui_assets_path' => 'vendor/swagger-api/swagger-ui/dist/', // Ruta de los assets de Swagger UI
         ],
 
         'scanOptions' => [
@@ -312,6 +322,7 @@ return [
         /*
          * Constants which can be used in annotations
          */
+       
         'constants' => [
             'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://localhost:8080'),
         ],

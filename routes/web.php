@@ -8,7 +8,10 @@ Route::get('/products', function () {
 });
 
 Route::get('/login', function () {
-    return view('login'); // Vista de login en Laravel, o Vue la maneja completamente
+    return view('login'); 
+});
+Route::get('/register', function () {
+    return view('register'); 
 });
 
 Route::post('/login', [AuthController::class, 'login']);

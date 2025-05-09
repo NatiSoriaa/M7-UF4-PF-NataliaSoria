@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import Login from './components/Login.vue';
+import Register from './components/Register.vue';
 import ProductList from './components/ProductList.vue';
 import axios from 'axios';
 
@@ -15,6 +16,7 @@ const app = createApp({});
 
 // Registrar componentes Vue globalmente
 app.component('login', Login);
+app.component('register', Register);
 app.component('product-list', ProductList);
 
 // Montar la app en el div con id="app"
